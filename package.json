@@ -1,7 +1,7 @@
 {
-  "name": "luxecart-root",
+  "name": "novexa-mart",
   "version": "1.0.0",
-  "description": "Root configuration for LuxeCart E-Commerce App",
+  "description": "Root configuration for Novexa Mart E-Commerce App",
   "scripts": {
     "install-all": "npm install --prefix server && npm install --prefix client",
     "dev:server": "npm run dev --prefix server",

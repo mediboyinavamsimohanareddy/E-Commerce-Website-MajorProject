@@ -29,3 +29,4 @@ server/uploads/*
 *.njsproj
 *.sln
 *.sw?
+node_modules
