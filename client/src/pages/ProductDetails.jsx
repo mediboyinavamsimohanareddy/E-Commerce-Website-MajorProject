@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, Minus, Plus, Truck, RotateCcw, ShieldCheck } from 'lucide-react';
 import { productsAPI } from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -8,9 +8,11 @@ import { useAuth } from '../context/AuthContext';
 import Loader from '../components/common/Loader';
 import ProductCard from '../components/product/ProductCard';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/formatPrice';
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +58,15 @@ const ProductDetails = () => {
     try {
       await addToCart(product._id, quantity);
       toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart`);
+    } catch (error) {
+      toast.error('Failed to add to cart');
+    }
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      await addToCart(product._id, quantity);
+      navigate('/cart');
     } catch (error) {
       toast.error('Failed to add to cart');
     }
@@ -180,11 +191,11 @@ const ProductDetails = () => {
 
               <div className="flex items-end gap-3 mb-8">
                 <span className="text-4xl font-extrabold text-surface-900 dark:text-white">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price)}
                 </span>
                 {product.comparePrice > product.price && (
                   <span className="text-xl text-surface-400 line-through mb-1">
-                    ${product.comparePrice.toFixed(2)}
+                    {formatPrice(product.comparePrice)}
                   </span>
                 )}
               </div>
@@ -222,6 +233,14 @@ const ProductDetails = () => {
                   >
                     <ShoppingCart size={20} className="mr-2" />
                     {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                  </button>
+
+                  <button 
+                    onClick={handleBuyNow}
+                    disabled={product.stock === 0}
+                    className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-surface-900 h-14 text-lg"
+                  >
+                    Buy Now
                   </button>
 
                   <button 

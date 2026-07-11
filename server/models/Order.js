@@ -17,6 +17,10 @@ const orderItemSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
+    trackingId: {
+      type: String,
+      unique: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -29,11 +33,12 @@ const orderSchema = new mongoose.Schema(
       state: { type: String, required: true },
       zipCode: { type: String, required: true },
       country: { type: String, required: true },
+      phone: { type: String, required: true },
     },
     paymentMethod: {
       type: String,
       required: true,
-      enum: ['card', 'paypal', 'cod'],
+      enum: ['card', 'paypal', 'cod', 'upi'],
       default: 'card',
     },
     paymentResult: {
@@ -64,7 +69,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+      enum: ['pending', 'confirmed', 'packed', 'shipped', 'out for delivery', 'delivered', 'cancelled'],
       default: 'pending',
     },
     isPaid: {

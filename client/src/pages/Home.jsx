@@ -51,7 +51,7 @@ const Home = () => {
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
               </div>
               <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">Free Shipping</h3>
-              <p className="text-surface-500 dark:text-surface-400 text-sm">On all orders over $100. Standard delivery applies.</p>
+              <p className="text-surface-500 dark:text-surface-400 text-sm">On all orders over ₹10,000. Standard delivery applies.</p>
             </div>
             <div className="p-6 bg-white dark:bg-surface-900 rounded-2xl shadow-sm border border-surface-100 dark:border-surface-800">
               <div className="w-12 h-12 mx-auto bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center rounded-xl mb-4">

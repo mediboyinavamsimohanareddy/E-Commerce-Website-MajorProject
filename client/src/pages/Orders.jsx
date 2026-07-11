@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, ChevronRight } from 'lucide-react';
 import { ordersAPI } from '../services/api';
 import Loader from '../components/common/Loader';
+import { formatPrice } from '../utils/formatPrice';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -62,6 +63,12 @@ const Orders = () => {
                     <p className="text-sm text-surface-500">Order ID</p>
                     <p className="font-mono text-sm font-medium text-surface-900 dark:text-white">#{order._id.substring(0, 8)}</p>
                   </div>
+                  {order.trackingId && (
+                    <div>
+                      <p className="text-sm text-surface-500">Tracking ID</p>
+                      <p className="font-mono text-sm font-medium text-surface-900 dark:text-white">{order.trackingId}</p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm text-surface-500">Date</p>
                     <p className="text-sm font-medium text-surface-900 dark:text-white">
@@ -71,7 +78,7 @@ const Orders = () => {
                   <div>
                     <p className="text-sm text-surface-500">Total</p>
                     <p className="text-sm font-bold text-primary-600 dark:text-primary-400">
-                      ${order.totalPrice.toFixed(2)}
+                      {formatPrice(order.totalPrice)}
                     </p>
                   </div>
                   <div>
@@ -105,7 +112,10 @@ const Orders = () => {
                 </div>
                 
                 {/* Actions */}
-                <div className="px-6 py-4 bg-surface-50 dark:bg-surface-900/30 border-t border-surface-200 dark:border-surface-800 flex justify-end">
+                <div className="px-6 py-4 bg-surface-50 dark:bg-surface-900/30 border-t border-surface-200 dark:border-surface-800 flex justify-between items-center">
+                  <Link to={`/orders/${order._id}/track`} className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                    Track Order <ChevronRight size={16} />
+                  </Link>
                   <button className="text-sm font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1">
                     View Details <ChevronRight size={16} />
                   </button>

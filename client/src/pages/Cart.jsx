@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Loader from '../components/common/Loader';
+import { formatPrice } from '../utils/formatPrice';
 
 const Cart = () => {
   const { cart, loading, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -40,7 +41,7 @@ const Cart = () => {
 
   // Calculate totals
   const subtotal = cart.totalPrice || 0;
-  const shipping = subtotal > 100 ? 0 : 10;
+  const shipping = subtotal > 10000 ? 0 : 10;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
@@ -116,10 +117,10 @@ const Cart = () => {
                     </div>
                     <div className="text-right">
                       <span className="block text-lg font-bold text-surface-900 dark:text-white">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.price * item.quantity)}
                       </span>
                       <span className="text-xs text-surface-500 dark:text-surface-400">
-                        ${item.price.toFixed(2)} each
+                        {formatPrice(item.price)} each
                       </span>
                     </div>
                   </div>
@@ -138,24 +139,24 @@ const Cart = () => {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-surface-600 dark:text-surface-400">
                   <span>Subtotal</span>
-                  <span className="font-medium text-surface-900 dark:text-white">${subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-surface-900 dark:text-white">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-surface-600 dark:text-surface-400">
                   <span>Shipping estimate</span>
                   <span className="font-medium text-surface-900 dark:text-white">
-                    {shipping === 0 ? <span className="text-emerald-500 font-semibold">Free</span> : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? <span className="text-emerald-500 font-semibold">Free</span> : formatPrice(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between text-surface-600 dark:text-surface-400">
                   <span>Tax estimate</span>
-                  <span className="font-medium text-surface-900 dark:text-white">${tax.toFixed(2)}</span>
+                  <span className="font-medium text-surface-900 dark:text-white">{formatPrice(tax)}</span>
                 </div>
               </div>
               
               <div className="border-t border-surface-200 dark:border-surface-800 pt-4 mb-8">
                 <div className="flex justify-between items-end">
                   <span className="text-lg font-bold text-surface-900 dark:text-white">Total</span>
-                  <span className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">${total.toFixed(2)}</span>
+                  <span className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">{formatPrice(total)}</span>
                 </div>
               </div>
               

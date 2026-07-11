@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import Loader from '../../components/common/Loader';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/formatPrice';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -33,13 +34,15 @@ const AdminOrders = () => {
     }
   };
 
-  const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+  const statusOptions = ['pending', 'confirmed', 'packed', 'shipped', 'out for delivery', 'delivered', 'cancelled'];
 
   const getStatusColor = (status) => {
     switch(status) {
       case 'pending': return 'bg-amber-100 text-amber-700';
-      case 'processing': return 'bg-blue-100 text-blue-700';
+      case 'confirmed': return 'bg-blue-100 text-blue-700';
+      case 'packed': return 'bg-indigo-100 text-indigo-700';
       case 'shipped': return 'bg-purple-100 text-purple-700';
+      case 'out for delivery': return 'bg-orange-100 text-orange-700';
       case 'delivered': return 'bg-emerald-100 text-emerald-700';
       case 'cancelled': return 'bg-red-100 text-red-700';
       default: return 'bg-surface-100 text-surface-700';
@@ -57,7 +60,7 @@ const AdminOrders = () => {
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-surface-50 dark:bg-surface-800/50 text-surface-500 dark:text-surface-400 font-semibold uppercase tracking-wider text-xs">
               <tr>
-                <th className="px-6 py-4">Order ID</th>
+                <th className="px-6 py-4">Order ID / Tracking ID</th>
                 <th className="px-6 py-4">Customer</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Total</th>
@@ -77,8 +80,9 @@ const AdminOrders = () => {
               ) : (
                 orders.map((order) => (
                   <tr key={order._id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs font-medium text-surface-900 dark:text-white">
-                      {order._id}
+                    <td className="px-6 py-4">
+                      <p className="font-mono text-xs font-medium text-surface-900 dark:text-white">#{order._id.substring(0, 8)}</p>
+                      {order.trackingId && <p className="font-mono text-xs text-surface-500 mt-1">{order.trackingId}</p>}
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-surface-900 dark:text-white">{order.user?.name || 'Guest'}</p>
@@ -88,7 +92,7 @@ const AdminOrders = () => {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 font-bold text-surface-900 dark:text-white">
-                      ${order.totalPrice.toFixed(2)}
+                      {formatPrice(order.totalPrice)}
                     </td>
                     <td className="px-6 py-4">
                       <span className="capitalize text-surface-600 dark:text-surface-300 text-xs font-semibold px-2 py-1 bg-surface-100 dark:bg-surface-800 rounded-md">

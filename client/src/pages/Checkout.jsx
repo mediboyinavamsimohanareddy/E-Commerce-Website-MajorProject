@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { ordersAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { CheckCircle, CreditCard, MapPin, Package } from 'lucide-react';
+import { formatPrice } from '../utils/formatPrice';
 
 const Checkout = () => {
   const { cart, clearCart } = useCart();
@@ -19,6 +20,7 @@ const Checkout = () => {
     state: user?.address?.state || '',
     zipCode: user?.address?.zipCode || '',
     country: user?.address?.country || '',
+    phone: user?.phone || '',
   });
   const [paymentMethod, setPaymentMethod] = useState('card');
 
@@ -50,11 +52,8 @@ const Checkout = () => {
       await clearCart();
       toast.success('Order placed successfully!');
       
-      // Simulate payment processing step, then redirect
-      setStep(3);
-      setTimeout(() => {
-        navigate(`/orders`);
-      }, 3000);
+      // Redirect to Order Success page
+      navigate(`/order-success?orderId=${data.data._id}`);
       
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order');
@@ -77,7 +76,6 @@ const Checkout = () => {
             {[
               { num: 1, label: 'Shipping', icon: MapPin },
               { num: 2, label: 'Payment', icon: CreditCard },
-              { num: 3, label: 'Success', icon: CheckCircle },
             ].map((s) => (
               <div key={s.num} className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 border-surface-50 dark:border-surface-950 ${
@@ -158,6 +156,16 @@ const Checkout = () => {
                       />
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Phone Number</label>
+                    <input
+                      type="tel"
+                      required
+                      value={shippingAddress.phone}
+                      onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
+                      className="input-field"
+                    />
+                  </div>
                   
                   <div className="mt-8 flex justify-end">
                     <button type="submit" className="btn-primary">
@@ -191,18 +199,34 @@ const Checkout = () => {
                   </label>
                   
                   <label className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
-                    paymentMethod === 'paypal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10' : 'border-surface-200 dark:border-surface-700'
+                    paymentMethod === 'upi' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10' : 'border-surface-200 dark:border-surface-700'
                   }`}>
                     <input 
                       type="radio" 
                       name="payment" 
-                      value="paypal" 
-                      checked={paymentMethod === 'paypal'} 
-                      onChange={() => setPaymentMethod('paypal')}
+                      value="upi" 
+                      checked={paymentMethod === 'upi'} 
+                      onChange={() => setPaymentMethod('upi')}
                       className="text-primary-600 focus:ring-primary-500"
                     />
                     <div>
-                      <p className="font-semibold text-surface-900 dark:text-white">PayPal</p>
+                      <p className="font-semibold text-surface-900 dark:text-white">UPI (GPay, PhonePe, BHIM)</p>
+                    </div>
+                  </label>
+
+                  <label className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
+                    paymentMethod === 'cod' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10' : 'border-surface-200 dark:border-surface-700'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="cod" 
+                      checked={paymentMethod === 'cod'} 
+                      onChange={() => setPaymentMethod('cod')}
+                      className="text-primary-600 focus:ring-primary-500"
+                    />
+                    <div>
+                      <p className="font-semibold text-surface-900 dark:text-white">Cash on Delivery (COD)</p>
                     </div>
                   </label>
                 </div>
@@ -216,24 +240,13 @@ const Checkout = () => {
                     disabled={loading}
                     className="btn-primary shadow-glow"
                   >
-                    {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                    {loading ? 'Processing...' : `Pay ${formatPrice(total)}`}
                   </button>
                 </div>
               </div>
             )}
 
-            {step === 3 && (
-              <div className="glass-card p-12 text-center flex flex-col items-center animate-bounce-in">
-                <div className="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle size={40} />
-                </div>
-                <h2 className="text-3xl font-bold text-surface-900 dark:text-white mb-2">Order Confirmed!</h2>
-                <p className="text-surface-500 mb-8 max-w-sm">
-                  Thank you for your purchase. We are processing your order and will redirect you to your order history shortly.
-                </p>
-                <div className="w-6 h-6 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
-              </div>
-            )}
+
 
           </div>
 
@@ -255,7 +268,7 @@ const Checkout = () => {
                     <div className="flex-1 text-sm">
                       <p className="font-semibold text-surface-900 dark:text-white line-clamp-1">{item.product?.name}</p>
                       <p className="text-surface-500">Qty: {item.quantity}</p>
-                      <p className="font-medium text-primary-600">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-medium text-primary-600">{formatPrice(item.price * item.quantity)}</p>
                     </div>
                   </div>
                 ))}
@@ -264,19 +277,19 @@ const Checkout = () => {
               <div className="space-y-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <div className="flex justify-between text-sm text-surface-600 dark:text-surface-400">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-surface-600 dark:text-surface-400">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-surface-600 dark:text-surface-400">
                   <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{formatPrice(tax)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-surface-900 dark:text-white pt-2 border-t border-surface-200 dark:border-surface-800">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
               </div>
             </div>

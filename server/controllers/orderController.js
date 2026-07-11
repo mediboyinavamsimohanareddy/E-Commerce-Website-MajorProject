@@ -41,12 +41,14 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // Calculate prices
   const itemsPrice = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const shippingPrice = itemsPrice > 10000 ? 0 : 10;
   const taxPrice = Number((itemsPrice * 0.08).toFixed(2));
   const totalPrice = Number((itemsPrice + shippingPrice + taxPrice).toFixed(2));
 
   // Create order
+  const trackingId = 'TRK-' + Date.now() + Math.floor(Math.random() * 1000);
   const order = await Order.create({
+    trackingId,
     user: req.user._id,
     items: orderItems,
     shippingAddress,

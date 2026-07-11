@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../utils/formatPrice';
 
 const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
@@ -71,8 +72,13 @@ const Wishlist = () => {
                 <Link to={`/product/${product._id}`} className="text-sm font-semibold text-surface-900 dark:text-white line-clamp-2 mb-2 hover:text-primary-600 transition-colors">
                   {product.name}
                 </Link>
-                <div className="text-lg font-bold text-surface-900 dark:text-white mb-4">
-                  ${product.price.toFixed(2)}
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xl font-bold text-surface-900 dark:text-white">
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className={`text-sm font-medium ${product.stock > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                  </span>
                 </div>
                 
                 <div className="mt-auto">

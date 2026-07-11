@@ -13,7 +13,9 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 import Orders from './pages/Orders';
+import TrackOrder from './pages/TrackOrder';
 import Profile from './pages/Profile';
 
 import AdminLayout from './components/admin/AdminLayout';
@@ -61,7 +63,9 @@ function App() {
             
             {/* Protected User Routes */}
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="/order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route path="/orders/:id/track" element={<ProtectedRoute><TrackOrder /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             
             {/* Admin Routes */}

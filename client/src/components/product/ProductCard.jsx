@@ -3,6 +3,7 @@ import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/formatPrice';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -96,11 +97,11 @@ const ProductCard = ({ product }) => {
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-surface-100 dark:border-surface-800">
           <div>
             <span className="text-lg font-bold text-surface-900 dark:text-white">
-              ${product.price.toFixed(2)}
+              {formatPrice(product.price)}
             </span>
             {product.comparePrice > product.price && (
               <span className="ml-2 text-xs text-surface-400 line-through">
-                ${product.comparePrice.toFixed(2)}
+                {formatPrice(product.comparePrice)}
               </span>
             )}
           </div>

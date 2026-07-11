@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { productsAPI } from '../../services/api';
 import Loader from '../../components/common/Loader';
 import toast from 'react-hot-toast';
+import { formatPrice } from '../../utils/formatPrice';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -106,8 +107,8 @@ const AdminProducts = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-medium text-surface-900 dark:text-white">
-                      ${product.price.toFixed(2)}
+                    <td className="px-6 py-4 font-semibold text-surface-900 dark:text-white">
+                      {formatPrice(product.price)}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${
